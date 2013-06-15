@@ -26,7 +26,7 @@
         <link rel="stylesheet" type="text/css" href="css/index.css" />
        	<link rel="stylesheet" type="text/css" href="css/bootstrap.css" /> 
         <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.css" />
-        <title>Hello World</title>
+        <title>NearBuy</title>
     </head>
     <body>
     	<div class = "navbar navbar-fixed-top">
@@ -38,39 +38,48 @@
 				</div>
 			</div>
 		</div>
-    	<div class="container-fluid">
-			<div class="row-fluid">
-		        <div class="app span12">
-		            <div id="deviceready" class="blink">
-		                <p class="event listening">Connecting to Device</p>
-		                <p class="event received">Device is Ready</p>
-		            </div>
-		            <div id="meli-login">
+    	<div class="container">
+			
+	        <div class="app">
+	        
+	            <div id="deviceready" class="blink">
+	                <p class="event listening">Connecting to Device</p>
+	                <p class="event received">Device is Ready</p>
+	            </div>
+	            
+	            <div id="meli-login">
+	            	
+	            </div>
+	            
+	            <div id="meli-query"> 	
+	            	<h2>Buscar producto</h2>
+            		<form class='form-search' id="query-form" action="nearbuy.herokuapp.com/queries" method='post'>
+		            	<div class='row'>
+            				<div class='span12'>	
+		            			<input type="text" name="str" class="input-block-level search-query">
+		            		</div>
+		            	</div>
 		            	
-		            </div>
-		            <div id="meli-query"> 	
-		            	<h2>Buscar producto</h2>
-	            		<form class='form-search' id="query-form" action="nearbuy.herokuapp.com/queries" method='post'>
-			            	<div class='row'>
-	            				<div class='span8'>	
-			            			<input type="text" name="str" class="input-block search-query">
-			            		</div>
-			            		<div class="span4">
-			            			<button type='submit' class='btn btn-block btn-primary'>Buscar</button>
-			            		</div>
-			            	</div>
-			            </form>
-		            </div>
-		            <div id="meli-results">
-		            </div>
-		            <div id="meli-map">
-		            </div>  
-		        </div>
-		     </div>
+		            	<div class='row' style="padding-top: 15px;">
+		            		<div class='span12'>
+		            			<button type='submit' class='btn btn-block btn-primary'>Buscar</button>
+		            		</div>
+		            	</div>
+		            </form>
+	            </div>
+	            
+	            <div id="meli-results">
+	            </div>
+	            <div id="meli-map">
+	            </div>  
+	            
+	        </div>
+	    
 		</div>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
-        <script type="text/javascript" src="js/jquery.form.js"></script>  
+        <script type="text/javascript" src="js/jquery.form.js"></script>
+        <script type="text/javascript" src="js/bootstrap.js"></script>  
         <!--  <script type="text/javascript" src="js/jquery.mobile-1.3.1.js"></script> -->
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript">
