@@ -17,6 +17,21 @@
  * under the License.
  */
 
+var nearbuyServer = 'http://192.168.80.168:3000';
+var getSearchURL = nearbuyServer + '/search';
+
+function getSearchPageURL(id,page) {
+	return nearbuyServer + '/searches/' + String(id) + '/' + String(page); 
+}
+
+function getMapURL(id) {
+	return nearbuyServer + '/searches/' + String(id) + '/map';
+}
+
+function getCityListURL(id,cid) {
+	return nearbuyServer + '/searches/' + String(id) + '/map/' + String(cid);
+}
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -89,8 +104,8 @@ var queryOptions = {
     //beforeSubmit:  app.prepareQuery,  // pre-submit callback 
     success:       app.getQueryResponse,  // post-submit callback 
  
-        // other available options: 
-    url:       'http://192.168.80.168:3000/search',       // override for form's 'action' attribute 
+    // other available options: 
+    url:       getSearchURL,       // override for form's 'action' attribute 
     type:      'get',        // 'get' or 'post', override for form's 'method' attribute 
     dataType:  'json',        // 'xml', 'script', or 'json' (expected server response type) 
     //clearForm: true        // clear all form fields after successful submit 
@@ -100,10 +115,13 @@ var queryOptions = {
     timeout:   60000 
 };
 
+var lat;
+var lon;
+
 function geoSuccess(position) {
 	
-	var lat = position.coords.latitude;
-	var lon = position.coords.longitude;
+	lat = position.coords.latitude;
+	lon = position.coords.longitude;
 	
 	console.log("got pos.");
 	$('input#lat').val(lat);
@@ -121,8 +139,6 @@ function geoFail(error) {
 
 function prepareQuery() {
 	
-	//$('#meli-query').hide();
-	//$('#meli-loading').show();
 	switchToView('meli-loading');
 	console.log("getting my location");
 	navigator.geolocation.getCurrentPosition(geoSuccess,geoFail,{enableHighAccuracy:true});
@@ -144,20 +160,18 @@ function updateMeliResults()
 	$('#results-table').append(html);
 }
 
-//prepare the form when the DOM is ready 
+
+var myScroll = null;
+
 $(document).ready(function() { 
     
-	setTimeout(function () {
-		myScroll = new iScroll('wrapper', { zoom: true });
-	}, 100);
+	
     $('#meli-login').hide();
     $('#meli-loading').hide();
 	$('#meli-query').hide();
 	$('#meli-results').hide();
 	$('#meli-map').hide();
-    // bind form using 'ajaxForm' 
-  //  $('#query-form').ajaxForm(queryOptions);
-    
+
     $('#query-form').submit(prepareQuery);
 }); 
  
@@ -200,14 +214,24 @@ function switchToView(view) {
 	
 	$('.app-view').hide();
 	$('.'+currentView).show();
+	if(myScroll != null)
+	{
+		myScroll.destroy();
+		myScroll = null;
+	}
 	if(currentView=='meli-results')
 	{
 		updateMeliResults();
+		//setTimeout(function () {
+		//	myScroll = new iScroll('wrapper', { zoom: true });
+		//}, 200);
 	}
 	else if(currentView=='meli-map')
 	{
 		generateMeliMap();
 	}
+	//myScroll.refresh();
+    //myScroll.scrollTo(0, 0, 1000);
 }
 
 var currentPage;
@@ -215,7 +239,95 @@ function goToPage(ind){
 	//currentView = 'meli-product';
 	currentPage = window.open(queryProducts[ind].permalink, '_blank', 'location=yes');
 }
-
+var myMap;
 function generateMeliMap(){
+	var mapOptions = {
+	  center: new google.maps.LatLng(lat, lon),
+	  zoom: 10,
+	  mapTypeId: google.maps.MapTypeId.ROADMAP
+	};
+	//$("#map-canvas").remove();
+	//var canvas=$("map-container").append("<div id='map-canvas' style='width: 100%; height: 300px;'></div>");
 	
+	myMap = new google.maps.Map(document.getElementById('map-canvas'),
+		    mapOptions);
+	
+	$.get(getMapURL(queryID), generateMapOverlays , "json");
+	
+}
+
+var total;
+var mapArr;
+var circ;
+var labels;
+var myLatLng;
+
+function generateMapOverlays(data) {
+	total = data.total;
+	mapArr = data.map;
+	circ = [];
+	labels = [];
+	myLatLng = new google.maps.LatLng(lat,lon);
+	for(var i=0;i<mapArr.length;i++)
+	{
+		var thisLatLng = new google.maps.LatLng(mapArr[i].latitude,mapArr[i].longitude)
+		circ[i] = new google.maps.Circle({
+            center: thisLatLng,
+            clickable:true,
+            fillColor:"#0000FF",
+            fillOpacity:0.1, 
+            map:myMap,
+            radius:mapArr[i].radius*1000,
+            strokeColor:"#777777",
+            strokeOpacity:0.1});
+		
+		addCircleListener(mapArr,i,circ[i]);
+		
+		
+        var myOptions = {
+                 content: String(mapArr[i].count)
+                ,boxStyle: {
+                   border: "0px"
+                  ,textAlign: "center"
+                  ,fontSize: "12pt"
+                  ,width: "50px"
+                 }
+                ,disableAutoPan: true
+                ,pixelOffset: new google.maps.Size(-25, 0)
+                ,position: thisLatLng
+                ,closeBoxURL: ""
+                ,isHidden: false
+                ,pane: "mapPane"
+                ,enableEventPropagation: true
+        };
+
+        var ibLabel = new InfoBox(myOptions);
+        ibLabel.open(myMap);
+		
+	}
+	
+	 var marker = new google.maps.Marker({
+	      position: myLatLng,
+	      map: myMap,
+	      title:"Estas aca!"
+	  });
+}
+
+function goToCityList(responseObject) {
+	console.log("hooray");
+	//$('#meli-loading').hide();
+	//$('#meli-results').show();
+	
+	queryProducts = responseObject.list;
+	currentPage = 1;
+	nPages = 1;
+	
+	switchToView('meli-results');
+}
+function addCircleListener(mapArr,i,myCirc)
+{
+	google.maps.event.addListener(myCirc, 'click', function(ev){
+		   var city_id = mapArr[i].id;
+		   $.get(getCityListURL(queryID,city_id), goToCityList , "json");
+		});
 }
