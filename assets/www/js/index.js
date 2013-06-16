@@ -243,7 +243,7 @@ var myMap;
 function generateMeliMap(){
 	var mapOptions = {
 	  center: new google.maps.LatLng(lat, lon),
-	  zoom: 10,
+	  zoom: 12,
 	  mapTypeId: google.maps.MapTypeId.ROADMAP
 	};
 	//$("#map-canvas").remove();
@@ -277,7 +277,7 @@ function generateMapOverlays(data) {
             fillColor:"#0000FF",
             fillOpacity:0.1, 
             map:myMap,
-            radius:mapArr[i].radius*1000,
+            radius:mapArr[i].radius*700,
             strokeColor:"#777777",
             strokeOpacity:0.1});
 		
@@ -289,7 +289,8 @@ function generateMapOverlays(data) {
                 ,boxStyle: {
                    border: "0px"
                   ,textAlign: "center"
-                  ,fontSize: "12pt"
+                  ,fontSize: "14pt"
+                  ,fontWeight: "bold"
                   ,width: "50px"
                  }
                 ,disableAutoPan: true
