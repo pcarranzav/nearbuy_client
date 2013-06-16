@@ -32,5 +32,11 @@ public class NearBuyClient extends DroidGap
         super.loadUrl(Config.getStartUrl());
         //super.loadUrl("file:///android_asset/www/index.html")
     }
+    
+    //@Override
+    //public void onBackPressed() {
+     //   super.loadUrl("javascript:onBackKeyDown()");
+      //  return;
+    //}
 }
 

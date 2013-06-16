@@ -31,11 +31,13 @@
     </author>
 
     <access origin="*"/>
-
+	<access origin="http://192.168.80.165:3000" subdomains="true"/>
+	<access origin="http://0.0.0.0:3000" subdomains="true"/>
     <!-- <content src="http://mysite.com/myapp.html" /> for external pages -->
     <content src="index.html" />
 
     <preference name="loglevel" value="DEBUG" />
+    <preference name="android-minSdkVersion" value="5" />
     <!--
       <preference name="splashscreen" value="resourceName" />
       <preference name="backgroundColor" value="0xFFF" />

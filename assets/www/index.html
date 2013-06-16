@@ -23,8 +23,9 @@
         <meta name="format-detection" content="telephone=no" />
      <!--  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" /> -->  
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
-       	<link rel="stylesheet" type="text/css" href="css/bootstrap.css" /> 
+        
+       	<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+       	<link rel="stylesheet" type="text/css" href="css/index.css" />
         <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.css" />
         <title>NearBuy</title>
     </head>
@@ -33,12 +34,24 @@
 			<div class="navbar-inner">
 				<div class="container">
 					<ul class="nav">
-						<li class="brand">NearBuy - MercadoLibre</li>
+						<li><img src='img/logo-mercadolibre-new.png'></li>
+						<li class="brand">   NearBuy</li>
+						<li class='divider-vertical'></li>
+						<li class='app-view meli-results'><a href='#' onclick="switchToView('meli-map')">Mapa</a></li>
+						<li class='app-view meli-map'><a href='#' onclick="switchToView('meli-results')">Lista</a></li>
 					</ul>
 				</div>
 			</div>
 		</div>
-    	<div class="container">
+		<div id='meli-loading' class="app-view meli-loading container" style='position: static;'>
+	            	<div class='row'>
+            			<div class='span12'>
+            				<div id="meli-loading-gif">
+            				</div>
+            			</div>
+            		</div>
+	            </div>
+    	<div id='wrapper' class="container">
 			
 	        <div class="app">
 	        
@@ -47,30 +60,46 @@
 	                <p class="event received">Device is Ready</p>
 	            </div>
 	            
-	            <div id="meli-login">
+	            <div id="meli-login" class="app-view meli-login">
 	            	
 	            </div>
 	            
-	            <div id="meli-query"> 	
+	            <div id="meli-query" class="app-view meli-query"> 	
 	            	<h2>Buscar producto</h2>
-            		<form class='form-search' id="query-form" action="nearbuy.herokuapp.com/queries" method='post'>
+            		<form class='form-search' id="query-form" action="http://nearbuy.herokuapp.com/queries" method='post'>
 		            	<div class='row'>
-            				<div class='span12'>	
-		            			<input type="text" name="str" class="input-block-level search-query">
+            				<div class='span4 offset4'>	
+		            			<input type="text" name="q" class="input-block-level search-query">
+		            			<input type="hidden" name="lat" id='lat' value=''>
+		            			<input type="hidden" name="long" id='long' value=''>
 		            		</div>
 		            	</div>
 		            	
 		            	<div class='row' style="padding-top: 15px;">
-		            		<div class='span12'>
+		            		<div class='span4 offset4'>
 		            			<button type='submit' class='btn btn-block btn-primary'>Buscar</button>
 		            		</div>
 		            	</div>
 		            </form>
 	            </div>
 	            
-	            <div id="meli-results">
+	            
+	            
+	            <div id="meli-results" class="app-view meli-results">
+	            	<table id='results-table' class='table table-striped'>
+	            		<thead>
+	            		</thead>
+	            		<tbody>
+	            		</tbody>
+	            	</table>
 	            </div>
-	            <div id="meli-map">
+	            <div id="meli-map" class="app-view meli-map">
+	            	<div class='row'>
+            			<div class='span4 offset4'>
+	            			<div id="map-canvas">
+	            			</div>
+	            		</div>
+	            	</div>
 	            </div>  
 	            
 	        </div>
@@ -80,6 +109,7 @@
         <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
         <script type="text/javascript" src="js/jquery.form.js"></script>
         <script type="text/javascript" src="js/bootstrap.js"></script>  
+        <script type="text/javascript" src="js/iscroll.js"></script>
         <!--  <script type="text/javascript" src="js/jquery.mobile-1.3.1.js"></script> -->
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript">
