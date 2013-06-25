@@ -31,8 +31,8 @@
     </author>
 
     <access origin="*"/>
-	<access origin="http://192.168.80.165:3000" subdomains="true"/>
-	<access origin="http://0.0.0.0:3000" subdomains="true"/>
+	<access origin="http://near-buy.herokuapp.com" subdomains="true"/>
+    <access origin="https://maps.googleapis.com" subdomains="true"/>
     <!-- <content src="http://mysite.com/myapp.html" /> for external pages -->
     <content src="index.html" />
 

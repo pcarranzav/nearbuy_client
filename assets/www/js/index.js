@@ -17,8 +17,9 @@
  * under the License.
  */
 
-var nearbuyServer = 'http://192.168.80.168:3000';
+var nearbuyServer = "http://near-buy.herokuapp.com";
 var getSearchURL = nearbuyServer + '/search';
+var pingURL = nearbuyServer + '/ping';
 
 function getSearchPageURL(id,page) {
 	return nearbuyServer + '/searches/' + String(id) + '/' + String(page); 
@@ -65,32 +66,43 @@ var app = {
         receivedElement.setAttribute('style', 'display:block;');
 
         console.log('Received Event: ' + id);
+
+        $('#meli-login').hide();
+        $('#meli-loading').hide();
+    	$('#meli-query').hide();
+    	$('#meli-results').hide();
+    	$('#meli-map').hide();
+
+        $('#query-form').submit(prepareQuery);
+        $.get(pingURL, function(data){} , "json");
         
         $('#deviceready').hide();
         //$('#meli-query').show();
         switchToView('meli-query');
-    },
- // post-submit callback 
-    getQueryResponse: function (responseObject, statusText, xhr, $form)  { 
-        
-    	console.log("hooray");
-    	//$('#meli-loading').hide();
-    	//$('#meli-results').show();
-    	
-    	queryID = responseObject.id;
-    	queryProducts = responseObject.results;
-    	currentPage = responseObject.page;
-    	nPages = responseObject.nPages;
-    	
-    	switchToView('meli-results');
-    	
-    	//console.log(responseObject);
-       // alert('status: ' + statusText + '\n\nresponseText: \n' + responseText + 
-        //    '\n\nThe output div should have already been updated with the responseText.'); 
-    },
+    }
     
     
 };
+
+
+// post-submit callback 
+function getQueryResponse(responseObject, statusText, xhr, $form)  { 
+    
+	console.log("hooray");
+	//$('#meli-loading').hide();
+	//$('#meli-results').show();
+	
+	queryID = responseObject.id;
+	queryProducts = responseObject.results;
+	currentPage = responseObject.page;
+	nPages = responseObject.nPages;
+	
+	switchToView('meli-results');
+	
+	//console.log(responseObject);
+   // alert('status: ' + statusText + '\n\nresponseText: \n' + responseText + 
+    //    '\n\nThe output div should have already been updated with the responseText.'); 
+}
 
 var currentView = 'meli-query';
 
@@ -98,11 +110,18 @@ var queryID;
 var queryProducts;
 var currentPage;
 var nPages;
-
+function queryError(jXHR,textStatus,errorThrown )
+{
+	console.log('wtwtf?');
+	$('#error-message').show;
+	console.log(jXHR);
+	console.log(textStatus);
+	console.log(errorThrown);
+}
 var queryOptions = { 
     //target:        '#output1',   // target element(s) to be updated with server response 
     //beforeSubmit:  app.prepareQuery,  // pre-submit callback 
-    success:       app.getQueryResponse,  // post-submit callback 
+    success:       getQueryResponse,  // post-submit callback 
  
     // other available options: 
     url:       getSearchURL,       // override for form's 'action' attribute 
@@ -112,7 +131,8 @@ var queryOptions = {
     //resetForm: true        // reset the form after successful submit 
  
         // $.ajax options can be used here too, for example: 
-    timeout:   60000 
+    timeout:   60000 ,
+    error: queryError
 };
 
 var lat;
@@ -165,14 +185,8 @@ var myScroll = null;
 
 $(document).ready(function() { 
     
-	
-    $('#meli-login').hide();
-    $('#meli-loading').hide();
-	$('#meli-query').hide();
-	$('#meli-results').hide();
-	$('#meli-map').hide();
-
-    $('#query-form').submit(prepareQuery);
+	app.initialize();
+    
 }); 
  
 function onBackKeyDown(e){
@@ -243,7 +257,7 @@ var myMap;
 function generateMeliMap(){
 	var mapOptions = {
 	  center: new google.maps.LatLng(lat, lon),
-	  zoom: 12,
+	  zoom: 10,
 	  mapTypeId: google.maps.MapTypeId.ROADMAP
 	};
 	//$("#map-canvas").remove();
